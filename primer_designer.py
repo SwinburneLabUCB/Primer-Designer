@@ -38,7 +38,7 @@ def design(sequence_id, sequence_template, sequence_included_region, insert_site
     
     
     # attempt to find primers with default settings
-    first_pass = design_primers_specific(sequence_id, sequence_template, sequence_included_region, insert_site)
+    first_pass = design_primers_specific(sequence_id, sequence_template, sequence_included_region, insert_site, left_search_site=left_search_site, right_search_site=right_search_site)
     left_num_returned = first_pass['PRIMER_LEFT_NUM_RETURNED']
     right_num_returned = first_pass['PRIMER_RIGHT_NUM_RETURNED']
     if left_num_returned > 0 and right_num_returned > 0:
@@ -127,6 +127,7 @@ def design(sequence_id, sequence_template, sequence_included_region, insert_site
             # attempt to find primers with current specific settings
             curr = design_primers_specific(sequence_id, sequence_template, sequence_included_region, insert_site,
                                    left_search_site, right_search_site, sizes=sizes, temps=temps, gcp=gcp, gcc=gcc, poly_x=poly_x)
+            print(curr)
             left_num_returned = curr['PRIMER_LEFT_NUM_RETURNED']
             right_num_returned = curr['PRIMER_RIGHT_NUM_RETURNED']
             if left_num_returned > 0 and right_num_returned > 0:
@@ -205,6 +206,27 @@ def export_primers(output_path, primer_dict, append):
     
     
     
+def get_oligos_specific_regions(sequence_id, sequence_template, csv_path, left_search_site, right_search_site, append_to_csv=False, max_tm_diff=2, var_order=default_order): 
+    
+    
+    left_section = sequence_template[left_search_site[0]:left_search_site[1]]
+    right_section = sequence_template[right_search_site[0]:right_search_site[1]]
+    
+    middle_cut_out = left_section+right_section
+    
+    print(design(sequence_id, middle_cut_out, (0, len(middle_cut_out)), 0, csv_path, append_to_csv=append_to_csv, left_search_site=left_search_site,
+           
+           right_search_site=[len(middle_cut_out)-(right_search_site[1]-right_search_site[0]),len(middle_cut_out)], 
+           
+           max_tm_diff=max_tm_diff, var_order=var_order))
+    
+    """left_results = design(sequence_id, left_section, (0, len(left_section)), 0, csv_path, append_to_csv=append_to_csv, left_search_site = left_search_site, right_search_site=[0,0], max_tm_diff=max_tm_diff, var_order=var_order)
+    
+    right_results = design(sequence_id, right_section, (0, len(right_section)), 0, csv_path, append_to_csv=append_to_csv, left_search_site = [0,0], right_search_site=[0,right_search_site[1]-right_search_site[0]], max_tm_diff=max_tm_diff, var_order=var_order)"""
+    
+    
+
+    
     
 def prune_results(orig_csv_path, new_csv_path, left_indices, right_indices, append=True): 
     """
@@ -241,7 +263,7 @@ def prune_results(orig_csv_path, new_csv_path, left_indices, right_indices, appe
         name = f"PRIMER_LEFT_{left_index}"
         
         if name not in all_primers.keys(): 
-            raise new Exception('primer not in list')
+            raise Exception('primer not in list')
             
         new_matrix.append([name, all_primers[name]])
         
@@ -249,7 +271,7 @@ def prune_results(orig_csv_path, new_csv_path, left_indices, right_indices, appe
         name = f"PRIMER_RIGHT_{right_index}"
         
         if name not in all_primers.keys(): 
-            raise new Exception('primer not in list')
+            raise Exception('primer not in list')
         
         new_matrix.append([name, all_primers[name]])
     
