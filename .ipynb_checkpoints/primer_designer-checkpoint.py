@@ -214,15 +214,11 @@ def get_oligos_specific_regions(sequence_id, sequence_template, csv_path, left_s
     
     middle_cut_out = left_section+right_section
     
-    print(design(sequence_id, middle_cut_out, (0, len(middle_cut_out)), 0, csv_path, append_to_csv=append_to_csv, left_search_site=left_search_site,
+    design(sequence_id, middle_cut_out, (0, len(middle_cut_out)), 0, csv_path, append_to_csv=append_to_csv, left_search_site=left_search_site,
            
            right_search_site=[len(middle_cut_out)-(right_search_site[1]-right_search_site[0]),len(middle_cut_out)], 
            
-           max_tm_diff=max_tm_diff, var_order=var_order))
-    
-    """left_results = design(sequence_id, left_section, (0, len(left_section)), 0, csv_path, append_to_csv=append_to_csv, left_search_site = left_search_site, right_search_site=[0,0], max_tm_diff=max_tm_diff, var_order=var_order)
-    
-    right_results = design(sequence_id, right_section, (0, len(right_section)), 0, csv_path, append_to_csv=append_to_csv, left_search_site = [0,0], right_search_site=[0,right_search_site[1]-right_search_site[0]], max_tm_diff=max_tm_diff, var_order=var_order)"""
+           max_tm_diff=max_tm_diff, var_order=var_order)
     
     
 
