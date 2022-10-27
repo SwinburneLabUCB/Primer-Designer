@@ -127,7 +127,6 @@ def design(sequence_id, sequence_template, sequence_included_region, insert_site
             # attempt to find primers with current specific settings
             curr = design_primers_specific(sequence_id, sequence_template, sequence_included_region, insert_site,
                                    left_search_site, right_search_site, sizes=sizes, temps=temps, gcp=gcp, gcc=gcc, poly_x=poly_x)
-            print(curr)
             left_num_returned = curr['PRIMER_LEFT_NUM_RETURNED']
             right_num_returned = curr['PRIMER_RIGHT_NUM_RETURNED']
             if left_num_returned > 0 and right_num_returned > 0:
@@ -208,7 +207,7 @@ def export_primers(output_path, primer_dict, append):
     
 def get_oligos_specific_regions(sequence_id, sequence_template, csv_path, left_search_site, right_search_site, append_to_csv=False, max_tm_diff=2, var_order=default_order): 
     """
-    Searches for oligos in a specific region of a sequence. Outputs results to a csv. Iteratively relaxes parameters if no primers found. 
+    Searches for oligos in 2 nonoverlapping regions of a sequence. Outputs results to a csv. Iteratively relaxes parameters if no primers found. 
     
     Args: 
         sequence_id: 
@@ -227,20 +226,25 @@ def get_oligos_specific_regions(sequence_id, sequence_template, csv_path, left_s
             maximum acceptable difference in melting temperatures between one set of primers. if there is at least one pair of forward/reverse primers that have melting temperatures within this range, the primer set will be accepted. default 2
         var_order:
             the order in which to relax variables, in the form of a list of Strings. default ['gcp', 'gcc', 'poly_x', 'temps', 'sizes'] 
-    Returns: 
-    
     """
+    
+    if right_search_site[1] < right_search_site[0] or left_search_site[1] < left_search_site[0]: 
+        raise Exception('invalid search sites')
     
     left_section = sequence_template[left_search_site[0]:left_search_site[1]]
     right_section = sequence_template[right_search_site[0]:right_search_site[1]]
     
     middle_cut_out = left_section+right_section
     
-    design(sequence_id, middle_cut_out, (0, len(middle_cut_out)), 0, csv_path, append_to_csv=append_to_csv, left_search_site=left_search_site,
+    
+    design(sequence_id, middle_cut_out, (0, len(middle_cut_out)), 0, csv_path, append_to_csv=append_to_csv, 
+           
+           left_search_site=[0, left_search_site[1]-left_search_site[0]],
            
            right_search_site=[len(middle_cut_out)-(right_search_site[1]-right_search_site[0]),len(middle_cut_out)], 
            
            max_tm_diff=max_tm_diff, var_order=var_order)
+
     
     
 
