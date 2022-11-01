@@ -3,6 +3,7 @@ import re
 import csv
 
 default_order = ['gcp', 'gcc', 'temps', 'sizes', 'poly_x'] 
+
 def design(sequence_id, sequence_template, sequence_included_region, insert_site, csv_path, append_to_csv=False, left_search_site=[-700,-100], right_search_site=[100,700], max_tm_diff=2, var_order=default_order): 
     """
     Searches for oligos surrounding an insert site. Iteratively attempts to design primers by selectively relaxing set parameters. Results will be printed and exported to a csv designated by csv_path. 
@@ -64,7 +65,7 @@ def design(sequence_id, sequence_template, sequence_included_region, insert_site
     gcc = 2
     poly_x = 2
     
-    # define bounds for when program stops. mostly arbitrarily selected, ask ian
+    # define bounds for when program stops. mostly arbitrarily selected
     size_lower_lim = 18
     size_upper_lim = 30
     temp_lower_lim = 50
